@@ -13,7 +13,7 @@ class GetPost extends Component {
       editTitle: post.title,
       editBody: post.body
     });
-  };
+  }
 
   handleUpdate = (id) => {
     const { editTitle, editBody } = this.state;
