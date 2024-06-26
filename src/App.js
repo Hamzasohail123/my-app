@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import GetPost from './components/GetPost';
 import CreatePost from './components/CreatePost';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class App extends Component {
   state = {
     posts: [],
-    nextId: 101 // Assuming the initial highest ID from the fake API is 100
+   
   };
 
   componentDidMount() {
@@ -23,10 +25,11 @@ class App extends Component {
   };
 
   addPost = (newPost) => {
-    newPost.id = this.state.nextId; // Assign the next available ID
+    newPost.id = this.state.nextId;
     this.setState(prevState => ({
       posts: [newPost, ...prevState.posts],
-      nextId: prevState.nextId + 1 // Increment the nextId for the next post
+      // increamt the id for next postt
+      nextId: prevState.nextId + 1
     }));
   };
 
@@ -48,8 +51,11 @@ class App extends Component {
     const { posts } = this.state;
     return (
       <div>
+  
         <CreatePost addPost={this.addPost} />
         <GetPost posts={posts} updatePost={this.updatePost} deletePost={this.deletePost} />
+        <ToastContainer />
+
       </div>
     );
   }

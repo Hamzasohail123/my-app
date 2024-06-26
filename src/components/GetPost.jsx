@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
+import { toast } from 'react-toastify';
 
 class GetPost extends Component {
   state = {
     isEditing: null,
     editTitle: '',
-    editBody: ''
+    editBody: '',
+    posts: this.props.posts,
+    isLoading: false,
+    loadingId: null
   };
 
   handleEdit = (post) => {
@@ -15,11 +19,17 @@ class GetPost extends Component {
     });
   }
 
+
+
   handleUpdate = (id) => {
     const { editTitle, editBody } = this.state;
+    const updatedPost = { id, title: editTitle, body: editBody };
+  
+    this.setState({ isLoading: true, loadingId: id });
+  
     fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify({ title: editTitle, body: editBody }),
+      body: JSON.stringify(updatedPost),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
@@ -27,24 +37,36 @@ class GetPost extends Component {
       .then(response => response.json())
       .then(updatedPost => {
         this.props.updatePost(updatedPost);
-        this.setState({ isEditing: null, editTitle: '', editBody: '' });
+        this.setState({ isEditing: null, editTitle: '', editBody: '', isLoading: false, loadingId: null });
+        toast.success('Post updated successfully');
       })
-      .catch(error => console.error('Error updating post:', error));
+      .catch(error => {
+        console.error('Error updating post:', error);
+        toast.error('Failed to update post. Please try again later.');
+        this.setState({ isLoading: false, loadingId: null });
+      });
   };
+  
 
   handleDelete = (id) => {
+    this.setState({ isLoading: true, loadingId: id });
     fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
       method: 'DELETE'
     })
       .then(() => {
         this.props.deletePost(id);
+        this.setState({ isLoading: false, loadingId: null });
+        toast.success('Post Delete Succesfully')
       })
-      .catch(error => console.error('Error deleting post:', error));
+      .catch(error => {
+        console.error('Error deleting post:', error);
+        this.setState({ isLoading: false, loadingId: null });
+      });
   };
 
   render() {
     const { posts } = this.props;
-    const { isEditing, editTitle, editBody } = this.state;
+    const { isEditing, editTitle, editBody, isLoading, loadingId } = this.state;
 
     return (
       <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -68,12 +90,14 @@ class GetPost extends Component {
                   <button
                     onClick={() => this.handleUpdate(post.id)}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    disabled={isLoading && loadingId === post.id}
                   >
-                    Update
+                    {isLoading && loadingId === post.id ? 'Updating...' : 'Update'}
                   </button>
                   <button
                     onClick={() => this.setState({ isEditing: null, editTitle: '', editBody: '' })}
                     className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2"
+                    disabled={isLoading && loadingId === post.id}
                   >
                     Cancel
                   </button>
@@ -85,14 +109,16 @@ class GetPost extends Component {
                   <button
                     onClick={() => this.handleEdit(post)}
                     className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+                    disabled={isLoading && loadingId === post.id}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => this.handleDelete(post.id)}
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    disabled={isLoading && loadingId === post.id}
                   >
-                    Delete
+                    {isLoading && loadingId === post.id ? 'Deleting...' : 'Delete'}
                   </button>
                 </div>
               )}
