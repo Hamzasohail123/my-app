@@ -56,7 +56,7 @@ class GetPost extends Component {
       .then(() => {
         this.props.deletePost(id);
         this.setState({ isLoading: false, loadingId: null });
-        toast.success('Post Delete Succesfully')
+        toast.success('Post Deleted Succesfully')
       })
       .catch(error => {
         console.error('Error deleting post:', error);
