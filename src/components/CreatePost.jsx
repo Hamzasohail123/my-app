@@ -54,7 +54,7 @@ const CreatePost = ({ addPost }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Body:</label>
+        <label className="block text-gray-700 text-sm font-bold mb-2">Content:</label>
         <textarea
           value={body}
           onChange={e => setBody(e.target.value)}
