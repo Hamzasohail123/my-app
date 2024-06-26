@@ -23,6 +23,10 @@ class GetPost extends Component {
 
   handleUpdate = (id) => {
     const { editTitle, editBody } = this.state;
+    if (!editTitle.trim() || !editBody.trim()) {
+      toast.error('Please fill  both title and Content fields.');
+      return;
+    }
     const updatedPost = { id, title: editTitle, body: editBody };
   
     this.setState({ isLoading: true, loadingId: id });
